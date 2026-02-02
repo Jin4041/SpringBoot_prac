@@ -1,7 +1,7 @@
 package com.example.spring_prac.controller;
 
-import com.example.spring_prac.domain.OrderInfomation;
-import com.example.spring_prac.domain.Product;
+import com.example.spring_prac.domain.OrderInformation;
+import com.example.spring_prac.domain.ProductDTO;
 import com.example.spring_prac.service.OrderService;
 import com.example.spring_prac.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -18,43 +18,48 @@ public class MainController {
     //필수 과제
     //1. 상품 CRUD
     @PostMapping(value = "/addProduct")
-    public void addProduct(@RequestBody Product product) {
+    public void addProduct(@RequestBody ProductDTO product) {
         productService.addProduct(product);
     }
 
-    @GetMapping(value = "/getProduct")
-    public List<Product> getProduct() {
+    @GetMapping(value = "/getProducts")
+    public List<ProductDTO> getProducts() {
         return productService.findAll();
     }
 
     @GetMapping(value = "/getProduct/{id}")
-    public Product getProduct(@PathVariable Long id) {
+    public ProductDTO getProduct(@PathVariable Long id) {
         return productService.findById(id);
     }
 
     @PostMapping(value = "/updateProduct/{id}")
-    public void updateProduct(@RequestBody Product product,@PathVariable Long id) {
+    public void updateProduct(@RequestBody ProductDTO product, @PathVariable Long id) {
         productService.updateProduct(product,id);
+    }
+
+    @PutMapping(value = "/hideProduct{id}")
+    public void hideProduct(@PathVariable Long id) {
+        productService.hideProduct(id);
     }
 
     @DeleteMapping(value = "/deleteProduct/{id}")
     public void deleteProduct(@PathVariable Long id) {
-        productService.delete(id);
+        productService.deleteProduct(id);
     }
 
     //2. 주문 생성 및 조회
-    @PostMapping("/newOrder")
-    public void addOrder(@RequestBody Long productId) {
-        orderService.newOrder(productId);
+    @GetMapping("/newOrder/{productId}")
+    public String newOrder(@PathVariable Long productId) {
+        return orderService.newOrder(productId);
     }
 
     @GetMapping("/orderList")
-    public List<OrderInfomation> getOrderList() {
+    public List<OrderInformation> orderList() {
         return orderService.findAll();
     }
 
     @GetMapping("/order/{id}")
-    public OrderInfomation getOrder(@PathVariable Long id) {
+    public OrderInformation findById(@PathVariable Long id) {
         return orderService.findById(id);
     }
 

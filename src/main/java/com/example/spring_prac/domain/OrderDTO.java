@@ -11,12 +11,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Order {
+@Table(name = "orders")
+public class OrderDTO {
+
     @Id
+    @Column(name = "id",updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="productId",nullable = false)
-    private Product product;
+    @JoinColumn(name="product_id",nullable = false)
+    private ProductDTO product;
 
 }

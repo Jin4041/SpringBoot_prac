@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-public class OrderInfomation {
+public class OrderInformation {
     private Long id;
     private String productName;
 }
