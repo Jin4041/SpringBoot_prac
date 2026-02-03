@@ -1,10 +1,13 @@
 package com.example.spring_prac.service;
 
-import com.example.spring_prac.domain.OrderDTO;
-import com.example.spring_prac.domain.OrderInformation;
-import com.example.spring_prac.domain.ProductDTO;
+import com.example.spring_prac.domain.Order;
+import com.example.spring_prac.dto.OrderResponseDTO;
+import com.example.spring_prac.domain.Product;
+import com.example.spring_prac.dto.ProductUpdateRequestDTO;
 import com.example.spring_prac.repository.OrderRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,31 +19,32 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductService productService;
 
-    synchronized public String newOrder(Long productId) {
-        ProductDTO product=productService.findById(productId);
+    @Transactional
+    synchronized public ResponseEntity<String> newOrder(Long productId) {
+        Product product=productService.findById(productId);
         if(product.getStock()==0) {
-            return "해당 제품의 재고가 없습니다.";
-        } else if (product.getStatus()== ProductDTO.Status.unavailable) {
-            return "해당 제품은 이용이 중지되었습니다.";
+            throw new IllegalStateException("재고 소진");
+        } else if (product.getStatus()== Product.Status.unavailable) {
+            throw new IllegalStateException("판매 중지");
         }else{
             if(product.getStock()==1)
-                product.setStatus(ProductDTO.Status.unavailable);
+                product.setStatus(Product.Status.unavailable);
             product.setStock(product.getStock()-1);
-            productService.updateProduct(product, productId);
-            orderRepository.save(OrderDTO.builder().product(product).build());
-            return "주문이 완료되었습니다.";
+            ProductUpdateRequestDTO newProduct=ProductUpdateRequestDTO.builder().stock(product.getStock()).build();
+            productService.updateProduct(newProduct, productId);
+            return ResponseEntity.ok("주문 완료");
         }
     }
 
-    public OrderInformation findById(Long id) {
-        OrderDTO order= orderRepository.findById(id).orElseThrow(()->new RuntimeException("해당 주문을 찾을 수 없습니다."));
-        return new OrderInformation(order.getId(),order.getProduct().getName());
+    public OrderResponseDTO findById(Long id) {
+        Order order= orderRepository.findById(id).orElseThrow(()->new RuntimeException("해당 주문을 찾을 수 없습니다."));
+        return OrderResponseDTO.builder().id(order.getId()).productName(order.getProduct().getName()).build();
     }
 
-    public List<OrderInformation> findAll() {
-        List<OrderInformation> list =new ArrayList<>();
-        for(OrderDTO order : orderRepository.findAll()){
-            list.add(new OrderInformation(order.getId(),order.getProduct().getName()));
+    public List<OrderResponseDTO> findAll() {
+        List<OrderResponseDTO> list =new ArrayList<>();
+        for(Order order : orderRepository.findAll()){
+            list.add(OrderResponseDTO.builder().id(order.getId()).productName(order.getProduct().getName()).build());
         }
         return list;
     }

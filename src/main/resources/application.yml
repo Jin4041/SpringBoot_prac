@@ -1,13 +1,15 @@
 spring:
-  h2:
-    console:
-      enable: true
-      path: /h2-console
+#  h2:
+#    console:
+#      enable: true
+#      path: /h2-console
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:db
-    username: sa
-    password:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:db
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/testdb
+    username: root
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: update
