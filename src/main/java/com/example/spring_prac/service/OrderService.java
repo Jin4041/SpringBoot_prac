@@ -1,6 +1,7 @@
 package com.example.spring_prac.service;
 
 import com.example.spring_prac.domain.Order;
+import com.example.spring_prac.domain.type.Status;
 import com.example.spring_prac.dto.OrderResponseDTO;
 import com.example.spring_prac.domain.Product;
 import com.example.spring_prac.dto.ProductUpdateRequestDTO;
@@ -24,11 +25,11 @@ public class OrderService {
         Product product=productService.findById(productId);
         if(product.getStock()==0) {
             throw new IllegalStateException("재고 소진");
-        } else if (product.getStatus()== Product.Status.unavailable) {
+        } else if (product.getStatus()== Status.UNAVAILABLE) {
             throw new IllegalStateException("판매 중지");
         }else{
             if(product.getStock()==1)
-                product.setStatus(Product.Status.unavailable);
+                product.setStatus(Status.UNAVAILABLE);
             product.setStock(product.getStock()-1);
             ProductUpdateRequestDTO newProduct=ProductUpdateRequestDTO.builder().stock(product.getStock()).build();
             productService.updateProduct(newProduct, productId);

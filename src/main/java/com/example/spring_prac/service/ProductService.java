@@ -1,6 +1,7 @@
 package com.example.spring_prac.service;
 
 import com.example.spring_prac.domain.Product;
+import com.example.spring_prac.domain.type.Status;
 import com.example.spring_prac.dto.ProductAddRequestDTO;
 import com.example.spring_prac.dto.ProductResponseDTO;
 import com.example.spring_prac.dto.ProductUpdateRequestDTO;
@@ -43,7 +44,7 @@ public class ProductService {
 
     public void hideProduct(Long id) {
         Product product=findById(id);
-        product.setStatus(Product.Status.unavailable);
+        product.setStatus(Status.UNAVAILABLE);
     }
 
     public void deleteProduct(Long id) {
